@@ -13,7 +13,6 @@ C:\Users\Felix\Desktop\Projects\Next\backend\bin\Debug\net8.0\backend.runtimecon
 C:\Users\Felix\Desktop\Projects\Next\backend\bin\Debug\net8.0\backend.dll
 C:\Users\Felix\Desktop\Projects\Next\backend\bin\Debug\net8.0\backend.pdb
 C:\Users\Felix\Desktop\Projects\Next\backend\bin\Debug\net8.0\AutoMapper.dll
-C:\Users\Felix\Desktop\Projects\Next\backend\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\Felix\Desktop\Projects\Next\backend\bin\Debug\net8.0\Humanizer.dll
 C:\Users\Felix\Desktop\Projects\Next\backend\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
 C:\Users\Felix\Desktop\Projects\Next\backend\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll

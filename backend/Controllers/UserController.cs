@@ -20,7 +20,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<UserResponseDto> GetById([FromRoute] int id)
     {
-        User? user = _db.Users.Find(id);
+        AppUser? user = _db.AppUsers.Find(id);
         if (user == null)
             return NotFound();
 
@@ -31,8 +31,8 @@ public class UserController : ControllerBase
     [HttpPost]
     public ActionResult<UserResponseDto> CreateUser([FromBody] CreateUserRequestDto userDto)
     {
-        User user = new User(userDto.Username, userDto.Passowrd);
-        _db.Users.Add(user);
+        AppUser user = new(userDto.Username, userDto.Passowrd);
+        _db.AppUsers.Add(user);
         _db.SaveChanges();
         return new UserResponseDto(user.Id, user.Username);
     }

@@ -8,7 +8,7 @@ public class BackendContext : DbContext
 {
     public DbSet<Kanbanpost> Kanbanposts { get; set; }
 
-    public DbSet<User> Users { get; set; }
+    public DbSet<AppUser> AppUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -17,13 +17,13 @@ public class BackendContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .Entity<Kanbanpost>();
+        // modelBuilder
+            // .Entity<Kanbanpost>();
 
         
 
         modelBuilder
-            .Entity<User>()
+            .Entity<AppUser>()
             .HasData(
                 new { Id = 1, Username = "Felix", Password = "Abc123"}
             );
