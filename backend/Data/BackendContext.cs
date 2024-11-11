@@ -1,4 +1,5 @@
 using backend.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data;
@@ -6,6 +7,8 @@ namespace backend.Data;
 public class BackendContext : DbContext
 {
     public DbSet<Kanbanpost> Kanbanposts { get; set; }
+
+    public DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -17,8 +20,16 @@ public class BackendContext : DbContext
         modelBuilder
             .Entity<Kanbanpost>();
 
+        
+
+        modelBuilder
+            .Entity<User>()
+            .HasData(
+                new { Id = 1, Username = "Felix", Password = "Abc123"}
+            );
+
         base.OnModelCreating(modelBuilder);
     }
+
 }
 
-// Kolla 2.3 video
