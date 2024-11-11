@@ -10,6 +10,9 @@ db.Database.EnsureCreated();
 
 builder.Services.AddControllers();
 
+builder.Services.AddAutoMapper(typeof(Program));
+
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

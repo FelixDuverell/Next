@@ -1,3 +1,4 @@
+using AutoMapper;
 using backend.Data;
 using backend.Dto.Users;
 using backend.Models;
@@ -12,9 +13,11 @@ public class UserController : ControllerBase
 {
 
     private readonly BackendContext _db;
-    public UserController(BackendContext db)
+    private readonly IMapper _mapper;
+    public UserController(BackendContext db, IMapper mapper)
     {
         _db = db;
+        _mapper = mapper;
     }
 
     [HttpGet("{id}")]
@@ -24,7 +27,7 @@ public class UserController : ControllerBase
         if (user == null)
             return NotFound();
 
-        UserResponseDto userDto = new UserResponseDto(user.Id, user.Password);
+        UserResponseDto userDto = _mapper.Map<UserResponseDto>(user);
         return Ok(userDto);
     }
 
