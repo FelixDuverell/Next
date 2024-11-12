@@ -1,10 +1,12 @@
 using backend.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data;
 
-public class BackendContext : DbContext
+public class BackendContext : IdentityDbContext<IdentityUser>
 {
     public DbSet<Kanbanpost> Kanbanposts { get; set; }
 
@@ -17,15 +19,30 @@ public class BackendContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder
-            // .Entity<Kanbanpost>();
-
+        modelBuilder
+            .Entity<Kanbanpost>()
+                .HasData(
+                    new { Id = 1, Title = "Inbyggd", Message = "Data"}
+                );
         
+
+        AppUser user1 = new AppUser
+        {
+            Id = "c8a32ef7-46cf-4c01-988c-85feb76c7fd3",
+            UserName = "felix@example.com",
+            NormalizedUserName = "FELIX@EXAMPLE.COM",
+            Email = "felix@example.com",
+            NormalizedEmail = "FELIX@EXAMPLE.COM",
+            EmailConfirmed = true,
+            SecurityStamp = "initial_value"
+        };
+
+        user1.PasswordHash = new PasswordHasher<AppUser>().HashPassword(user1, "Abc123!");
 
         modelBuilder
             .Entity<AppUser>()
             .HasData(
-                new { Id = 1, Username = "Felix", Password = "Abc123"}
+                user1
             );
 
         base.OnModelCreating(modelBuilder);

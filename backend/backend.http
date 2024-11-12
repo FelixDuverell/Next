@@ -1,6 +1,15 @@
 @backend_HostAddress = http://localhost:5285
 
-GET {{backend_HostAddress}}/weatherforecast/
+
+### Get all posts
+GET {{backend_HostAddress}}/api/kanbanposts
 Accept: application/json
 
-###
+### Post a new post
+Post {{backend_HostAddress}}/api/Kanbanposts
+Content-Type: application/json
+
+{
+    "title": "ny title",
+    "message": "text";
+}

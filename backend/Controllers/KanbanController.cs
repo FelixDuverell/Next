@@ -1,12 +1,14 @@
 using System.Data.Common;
 using backend.Data;
 using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
 
 [Route("api/kanbanposts")]
 [ApiController]
+[Authorize]
 public class KanbanController : ControllerBase
 {
 
@@ -24,6 +26,9 @@ public class KanbanController : ControllerBase
     } 
 
     [HttpGet("{id}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [Produces("application/json")]
     public ActionResult<Kanbanpost> GetKanbanpostById([FromRoute] int id)
     {
         Kanbanpost? kanbanpost = _db.Kanbanposts.Find(id);
