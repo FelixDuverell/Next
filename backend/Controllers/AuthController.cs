@@ -2,6 +2,9 @@ using AutoMapper;
 using backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
 
 namespace backend.Controllers;
 [ApiController]
@@ -30,13 +33,12 @@ public class AuthController : ControllerBase
         IdentityResult result = await _userManager.CreateAsync(user, dto.Password);
 
         if(!result.Succeeded)
-        {
             return BadRequest(result.Errors);
-        }
-        else
-        {
+
+            await _userManager.AddToRoleAsync(user, "user");
+
             return Created();
-        }
+        
     }
 
     public record LoginDto(string Username, string Password);
@@ -57,4 +59,21 @@ public class AuthController : ControllerBase
             return NoContent();
         }
     }
+
+    public record WhoAmIResponseDto(string Id, string Username, List<string> Roles);
+
+    [HttpGet("whoami")]
+    [Authorize(Roles = "admin,user")]
+    public ActionResult<WhoAmIResponseDto> WhoAmI()
+    {
+        string name = User.Identity?.Name ?? "unknown";
+        string id = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "unknown";
+        List<string> roles = User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+
+        return new WhoAmIResponseDto(id, name, roles);
+
+    }
+
+
+
 }

@@ -1,8 +1,10 @@
 using System.Data.Common;
+using System.Security.Claims;
 using backend.Data;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
@@ -19,17 +21,21 @@ public class KanbanController : ControllerBase
         _db = backendContext;
     }
 
+    public record GetKanbanpostRequestDto(int Id, string Title, string Message, string UserId);
+
     [HttpGet]
-    public ActionResult<List<Kanbanpost>> GetAllKanbanposts()
+    public ActionResult<List<GetKanbanpostRequestDto>> GetAllKanbanposts()
     {
-        return _db.Kanbanposts.ToList();
+        return _db.Kanbanposts
+            .Select(kanban => new GetKanbanpostRequestDto(kanban.Id, kanban.Title, kanban.Message, kanban.UserId))
+            .ToList();
     } 
 
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [Produces("application/json")]
-    public ActionResult<Kanbanpost> GetKanbanpostById([FromRoute] int id)
+    public ActionResult<GetKanbanpostRequestDto> GetKanbanpostById([FromRoute] int id)
     {
         Kanbanpost? kanbanpost = _db.Kanbanposts.Find(id);
 
@@ -38,7 +44,7 @@ public class KanbanController : ControllerBase
             return NotFound();
         }
 
-        return Ok(kanbanpost);
+        return Ok(new GetKanbanpostRequestDto(kanbanpost.Id, kanbanpost.Title, kanbanpost.Message, kanbanpost.UserId));
     }
 
     [HttpDelete("{id}")]
@@ -55,14 +61,15 @@ public class KanbanController : ControllerBase
         return Ok();
     }
 
-    public record CreateKanbanpostDto(string Title, string Message);
+    public record CreateKanbanpostDto(string Title, string Message, string UserId);
 
     [HttpPost]
     public ActionResult<Kanbanpost> CreatePost([FromBody] CreateKanbanpostDto kanbanpostDto)
     {
-        Kanbanpost kanbanpost = new Kanbanpost(kanbanpostDto.Title, kanbanpostDto.Message);
+        Kanbanpost kanbanpost = new Kanbanpost(kanbanpostDto.Title, kanbanpostDto.Message, kanbanpostDto.UserId);
         _db.Kanbanposts.Add(kanbanpost);
         _db.SaveChanges();
         return CreatedAtAction(nameof(GetKanbanpostById), new { Id = kanbanpost.Id }, kanbanpost);
     }
+
 }

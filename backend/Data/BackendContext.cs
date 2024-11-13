@@ -19,11 +19,18 @@ public class BackendContext : IdentityDbContext<IdentityUser>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        IdentityRole adminRole = new("admin")
+        {
+            NormalizedName = "ADMIN"
+        };
+        IdentityRole userRole = new("user")
+        {
+            NormalizedName = "USER"
+        };
         modelBuilder
-            .Entity<Kanbanpost>()
-                .HasData(
-                    new { Id = 1, Title = "Inbyggd", Message = "Data"}
-                );
+            .Entity<IdentityRole>()
+            .HasData(adminRole, userRole);
         
 
         AppUser user1 = new AppUser
@@ -39,11 +46,41 @@ public class BackendContext : IdentityDbContext<IdentityUser>
 
         user1.PasswordHash = new PasswordHasher<AppUser>().HashPassword(user1, "Abc123!");
 
+         AppUser user2 = new AppUser
+        {
+            Id = "c8a32ef7-46cf-4c01-988c-85feb76c7abc",
+            UserName = "Tina@example.com",
+            NormalizedUserName = "TINA@EXAMPLE.COM",
+            Email = "Tina@example.com",
+            NormalizedEmail = "TINA@EXAMPLE.COM",
+            EmailConfirmed = true,
+            SecurityStamp = "initial_value"
+        };
+
+        user1.PasswordHash = new PasswordHasher<AppUser>().HashPassword(user2, "Abc123!");
+
+
         modelBuilder
             .Entity<AppUser>()
             .HasData(
-                user1
+                user1, user2
             );
+
+            modelBuilder
+                .Entity<IdentityUserRole<string>>()
+                .HasData(
+                    new IdentityUserRole<string>
+                    {
+                        RoleId = adminRole.Id,
+                        UserId = user1.Id
+                    }
+                );
+
+            modelBuilder
+            .Entity<Kanbanpost>()
+                .HasData(
+                    // new Kanbanpost("Hello World", "Mimi". user1.Id ) { Id = 1 },
+                );
 
         base.OnModelCreating(modelBuilder);
     }

@@ -1,8 +1,10 @@
+using System.Text.Json.Serialization;
 using backend.Data;
 using backend.Models;
 using backend.Repository;
 using backend.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,9 +14,23 @@ BackendContext db = new();
 db.Database.EnsureDeleted();
 db.Database.EnsureCreated();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins(["http://localhost:3000", "http://localhost:5285"]); 
+            policy.WithHeaders("content-type");
+            policy.AllowCredentials();
+        });
+});
 
-builder.Services.AddControllers();
 
+
+builder.Services.AddControllers()
+.AddJsonOptions(opt => {
+    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddScoped<IUserRepo, UserRepo>();
@@ -36,25 +52,31 @@ builder.Services.AddSwaggerGen(config => {
             Url = new Uri("https://felixduverell.github.io/")
         },
     });
-
-    
-
 });
 
 builder.Services.AddIdentityCore<AppUser>(opt => 
 {
     opt.Password.RequiredLength = 2;
-})
+})  
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<BackendContext>()
     .AddApiEndpoints();
 
 builder.Services.AddAuthentication()
     .AddCookie(IdentityConstants.ApplicationScheme, opt => {
+        opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        opt.Cookie.SameSite = SameSiteMode.None;
         opt.LoginPath = string.Empty;
         opt.Events.OnRedirectToLogin = context => 
         {
             context.Response.StatusCode = 401;
             return Task.CompletedTask;
+        };
+        opt.AccessDeniedPath = string.Empty;
+        opt.Events.OnRedirectToAccessDenied = context => 
+        {
+            context.Response.StatusCode = 403;  
+            return Task.CompletedTask; 
         };
     });
 
@@ -69,11 +91,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.MapControllers();
 
 //app.MapIdentityApi<IdentityUser>();
 
 app.UseAuthentication();
-app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
+
+// policybaserad_auktorisering kolla på igen

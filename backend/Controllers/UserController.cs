@@ -4,12 +4,14 @@ using backend.Dto.Users;
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers;
 
 
 [ApiController]
 [Route("api/users")]
+[Authorize(Roles = "admin")]
 public class UserController : ControllerBase
 {
 
