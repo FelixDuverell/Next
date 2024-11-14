@@ -9,7 +9,6 @@ namespace backend.Data;
 public class BackendContext : IdentityDbContext<IdentityUser>
 {
     public DbSet<Kanbanpost> Kanbanposts { get; set; }
-
     public DbSet<AppUser> AppUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -79,7 +78,8 @@ public class BackendContext : IdentityDbContext<IdentityUser>
             modelBuilder
             .Entity<Kanbanpost>()
                 .HasData(
-                    // new Kanbanpost("Hello World", "Mimi". user1.Id ) { Id = 1 },
+                    // new { Id = 1, Title = "Hello", Message = "FirstPost"} 
+
                 );
 
         base.OnModelCreating(modelBuilder);

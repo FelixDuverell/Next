@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using backend.Data;
 using backend.Models;
@@ -22,7 +23,7 @@ builder.Services.AddCors(options =>
             policy.WithOrigins(["http://localhost:3000", "http://localhost:5285"]); 
             policy.WithHeaders("content-type");
             policy.AllowCredentials();
-        });
+        }); 
 });
 
 
@@ -79,6 +80,21 @@ builder.Services.AddAuthentication()
             return Task.CompletedTask; 
         };
     });
+
+builder.Services.AddAuthorization(opt =>
+{
+
+    opt.AddPolicy("SelfOwnedResourceByQueryParam", policy => {
+
+        policy.RequireAssertion(context => {
+
+            string userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "unknown";
+            var queryParam = new HttpContextAccessor()?.HttpContext?.Request.Query.FirstOrDefault(query => query.Key == "userid");
+
+            return queryParam != null && queryParam?.Value.ToString() == userId;
+        });
+    });
+});
 
 var app = builder.Build();
 
